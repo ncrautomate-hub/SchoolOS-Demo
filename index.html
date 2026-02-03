@@ -202,6 +202,47 @@
                 </div>`;
             });
         }
+
+// 🟢 HANDLE NEW INQUIRY (This was missing!)
+        function handleInquiry(e) {
+            e.preventDefault(); // Stop page from reloading
+            
+            const name = document.getElementById('inq-name').value;
+            const phone = document.getElementById('inq-phone').value;
+            const loader = document.getElementById('inq-loader');
+            const successMsg = document.getElementById('inq-success');
+
+            // Simple validation
+            if (!name || !phone) return alert("Please fill in all fields");
+
+            loader.classList.remove('hidden');
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: "saveLead", 
+                    name: name, 
+                    phone: phone 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                loader.classList.add('hidden');
+                if (data.result === "Success") {
+                    successMsg.classList.remove('hidden');
+                    document.getElementById('inq-name').value = ""; // Clear form
+                    document.getElementById('inq-phone').value = "";
+                } else {
+                    alert("Error: " + JSON.stringify(data));
+                }
+            })
+            .catch(err => {
+                loader.classList.add('hidden');
+                alert("Connection Failed. Please try again.");
+                console.error(err);
+            });
+        }
+
     </script>
 </body>
 </html>
